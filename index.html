@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Advanced Course | pyplatoons Bangladesh</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="logos.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-base:      #070D1A;
+            --bg-surface:   #0E1628;
+            --bg-card:      #131E33;
+            --bg-card-alt:  #0A1221;
+            --cyan:         #06B6D4;
+            --cyan-dim:     rgba(6, 182, 212, 0.15);
+            --cyan-glow:    rgba(6, 182, 212, 0.35);
+            --indigo:       #6366F1;
+            --indigo-dim:   rgba(99, 102, 241, 0.12);
+            --red:          #C62828;
+            --amber:        #F59E0B;
+            --amber-warm:   #F97316;
+            --text-1:       #F0F6FF;
+            --text-2:       #94A3B8;
+            --text-3:       #64748B;
+            --border:       rgba(255,255,255,0.07);
+            --border-accent:rgba(6, 182, 212, 0.4);
+            --radius-card:  18px;
+            --radius-sm:    10px;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-base);
+            color: var(--text-1);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ──────────────────────────────
+           ANIMATED GRID BACKGROUND
+        ────────────────────────────── */
+        .grid-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(6,182,212,0.055) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(6,182,212,0.055) 1px, transparent 1px);
+            background-size: 52px 52px;
+            mask-image: radial-gradient(ellipse 90% 80% at 50% 0%, #000 60%, transparent 100%);
+        }
+
+        .grid-glow {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse 70% 50% at 15% 30%, rgba(6,182,212,0.09) 0%, transparent 65%),
+                radial-gradient(ellipse 60% 45% at 85% 75%, rgba(99,102,241,0.08) 0%, transparent 65%),
+                radial-gradient(ellipse 50% 40% at 50% 100%, rgba(198,40,40,0.05) 0%, transparent 60%);
+        }
+
+        /* ──────────────────────────────
+           LAYOUT
+        ────────────────────────────── */
+        main {
+            position: relative;
+            z-index: 1;
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 4rem 2rem 5rem;
+        }
+
+        /* ──────────────────────────────
+           HERO
+        ────────────────────────────── */
+        .hero {
+            text-align: center;
+            margin-bottom: 5rem;
+            animation: fadeDown 0.9s cubic-bezier(.22,1,.36,1) both;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(6,182,212,0.1);
+            border: 1px solid rgba(6,182,212,0.3);
+            color: var(--cyan);
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 0.45rem 1.1rem;
+            border-radius: 40px;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-eyebrow::before {
+            content: '';
+            display: inline-block;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan);
+            animation: pulse 1.4s ease-in-out infinite;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.4rem, 5vw, 4rem);
+            font-weight: 900;
+            line-height: 1.15;
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #e0f7ff 0%, var(--cyan) 45%, var(--indigo) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-sub {
+            font-size: 1.05rem;
+            color: var(--text-2);
+            max-width: 580px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .hero-divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyan), var(--indigo));
+            border-radius: 4px;
+            margin: 1.8rem auto;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            flex-wrap: wrap;
+            margin-top: 2.2rem;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat .num {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--cyan);
+            letter-spacing: -0.02em;
+        }
+
+        .hero-stat .lbl {
+            font-size: 0.78rem;
+            color: var(--text-3);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-top: 0.15rem;
+        }
+
+        /* ──────────────────────────────
+           SECTION HEADERS
+        ────────────────────────────── */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2.2rem;
+            padding-bottom: 1.4rem;
+            border-bottom: 1px solid var(--border-accent);
+        }
+
+        .section-icon {
+            width: 50px; height: 50px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--cyan), var(--indigo));
+            color: #fff;
+            box-shadow: 0 0 22px rgba(6,182,212,0.45);
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text-1);
+        }
+
+        .section-sub {
+            font-size: 0.9rem;
+            color: var(--text-2);
+            margin-top: 0.3rem;
+            line-height: 1.55;
+        }
+
+        .course-section {
+            margin-bottom: 4.5rem;
+            animation: fadeUp 0.8s cubic-bezier(.22,1,.36,1) both;
+        }
+        .course-section:nth-child(1) { animation-delay: 0.1s; }
+        .course-section:nth-child(2) { animation-delay: 0.2s; }
+        .course-section:nth-child(3) { animation-delay: 0.3s; }
+        .course-section:nth-child(4) { animation-delay: 0.4s; }
+        .course-section:nth-child(5) { animation-delay: 0.5s; }
+        .course-section:nth-child(6) { animation-delay: 0.6s; }
+        .course-section:nth-child(7) { animation-delay: 0.7s; }
+        .course-section:nth-child(8) { animation-delay: 0.8s; }
+        .course-section:nth-child(9) { animation-delay: 0.9s; }
+
+        /* ──────────────────────────────
+           TABLES
+        ────────────────────────────── */
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+            box-shadow: 0 0 40px rgba(6,182,212,0.12), inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 560px;
+        }
+
+        .data-table thead tr {
+            background: linear-gradient(90deg, rgba(6,182,212,0.22), rgba(99,102,241,0.18));
+            border-bottom: 1px solid var(--border-accent);
+        }
+
+        .data-table th {
+            padding: 1rem 1.25rem;
+            text-align: left;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--cyan);
+            vertical-align: top;
+        }
+
+        .data-table tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s;
+        }
+
+        .data-table tbody tr:last-child { border-bottom: none; }
+
+        .data-table tbody tr:hover {
+            background: rgba(6,182,212,0.05);
+        }
+
+        .data-table td {
+            padding: 0.85rem 1.25rem;
+            font-size: 0.9rem;
+            color: var(--text-2);
+            vertical-align: top;
+            line-height: 1.6;
+        }
+
+        .data-table td:first-child {
+            color: var(--cyan);
+            font-weight: 600;
+        }
+
+        .data-table tbody tr:nth-child(even) {
+            background: rgba(255,255,255,0.015);
+        }
+
+        /* Topic list inside table cells */
+        .cell-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        .cell-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-2);
+            line-height: 1.5;
+        }
+
+        .cell-list li::before {
+            content: '▸';
+            color: var(--cyan);
+            font-size: 0.7rem;
+            margin-top: 0.22rem;
+            flex-shrink: 0;
+        }
+
+        /* ──────────────────────────────
+           CTA SECTION
+        ────────────────────────────── */
+        .cta-wrapper {
+            position: relative;
+            z-index: 1;
+            margin-top: 2rem;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow:
+                0 30px 60px -15px rgba(0,0,0,0.6),
+                0 0 0 1px rgba(255,255,255,0.06),
+                0 0 80px rgba(198,40,40,0.12);
+        }
+
+        .cta-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 34px 34px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .cta-banner {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(110deg, #7f0000 0%, #b91c1c 40%, #991b1b 100%);
+            padding: 1.4rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .cta-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .megaphone {
+            font-size: 2.2rem;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+            animation: sway 1.8s ease-in-out infinite;
+            transform-origin: center bottom;
+        }
+
+        .cta-title {
+            background: #FFB300;
+            color: #1a0f00;
+            font-size: 1.15rem;
+            font-weight: 800;
+            padding: 0.3rem 1.1rem;
+            border-radius: 40px;
+            letter-spacing: -0.01em;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .cta-sub {
+            font-size: 0.82rem;
+            color: rgba(255,230,230,0.88);
+            font-weight: 600;
+            margin-top: 5px;
+            letter-spacing: 0.02em;
+        }
+
+        .cta-seats {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,220,100,0.35);
+            backdrop-filter: blur(4px);
+            padding: 0.5rem 1.3rem;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #FFF3C0;
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            white-space: nowrap;
+        }
+
+        .pulse-dot {
+            width: 8px; height: 8px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            animation: pulse 1.3s ease-in-out infinite;
+            box-shadow: 0 0 8px #ff6b6b;
+        }
+
+        .cta-body {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a2e 100%);
+            padding: 2.25rem 2rem 2.5rem;
+            text-align: center;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            background: linear-gradient(110deg, #F59E0B, #F97316);
+            color: #1a0c00;
+            font-size: 1.15rem;
+            font-weight: 800;
+            padding: 1rem 2.5rem;
+            border-radius: 80px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 12px 30px -8px rgba(249,115,22,0.55), 0 0 0 1px rgba(255,255,255,0.06);
+            transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            letter-spacing: -0.01em;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 22px 40px -10px rgba(249,115,22,0.65), 0 0 40px rgba(249,115,22,0.2);
+            background: linear-gradient(110deg, #fbbf24, #fb923c);
+        }
+
+        .cta-btn:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .btn-arrow {
+            font-size: 1.2rem;
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+
+        .cta-btn:hover .btn-arrow {
+            animation: arrowSlide 0.7s ease-in-out infinite;
+        }
+
+        .cta-deadline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.2rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--text-3);
+            font-size: 0.78rem;
+            font-weight: 500;
+            padding: 0.35rem 1.2rem;
+            border-radius: 30px;
+            letter-spacing: 0.02em;
+        }
+
+        .cta-deadline span { color: #f59e0b; font-weight: 700; }
+
+        .cta-countdown {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-top: 0.85rem;
+            background: rgba(198,40,40,0.12);
+            border: 1px solid rgba(255,107,107,0.35);
+            color: #ffd9d9;
+            font-size: 0.82rem;
+            font-weight: 600;
+            padding: 0.4rem 1.3rem;
+            border-radius: 30px;
+            letter-spacing: 0.02em;
+        }
+
+        .cta-countdown .countdown-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: #ff6b6b;
+            box-shadow: 0 0 8px #ff6b6b;
+            animation: pulse 1.3s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+
+        .cta-countdown #countdown-timer {
+            color: #ffb300;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.04em;
+        }
+
+        /* ──────────────────────────────
+           FOOTER LINE
+        ────────────────────────────── */
+        .page-footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-3);
+            font-size: 0.82rem;
+            letter-spacing: 0.04em;
+        }
+
+        /* ──────────────────────────────
+           KEYFRAMES
+        ────────────────────────────── */
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-22px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(22px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50%       { opacity: 1;   transform: scale(1.15); }
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: rotate(-6deg); }
+            50%       { transform: rotate(6deg) translateX(2px); }
+        }
+
+        @keyframes arrowSlide {
+            0%, 100% { transform: translateX(0); }
+            50%       { transform: translateX(7px); }
+        }
+
+        /* ──────────────────────────────
+           RESPONSIVE
+        ────────────────────────────── */
+        @media (max-width: 768px) {
+            main { padding: 2.5rem 1.25rem 4rem; }
+            .hero { margin-bottom: 3.5rem; }
+            .section-title { font-size: 1.35rem; }
+            .cta-banner { flex-direction: column; align-items: flex-start; }
+            .cta-seats { align-self: flex-start; }
+            .cta-btn { width: 100%; font-size: 1rem; }
+            .hero-stats { gap: 1.5rem; }
+            .data-table td, .data-table th { padding: 0.7rem 0.9rem; font-size: 0.82rem; }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 2rem; }
+            .section-icon { width: 42px; height: 42px; font-size: 1.2rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Grid Background Layers -->
+<div class="grid-bg"></div>
+<div class="grid-glow"></div>
+
+<main>
+
+    <!-- ── HERO ── -->
+    <section class="hero">
+        <div class="hero-eyebrow">pyplatoons Bangladesh</div>
+        <h1>Python Advanced Course Outlines</h1>
+        <div class="hero-divider"></div>
+        <p class="hero-sub">A complete advanced Python journey — Data Structures, OOP, NumPy, Pandas, Matplotlib, Projects, and Career Guidelines</p>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="num">8</div>
+                <div class="lbl">Modules</div>
+            </div>
+            <div class="hero-stat">
+                <div class="num">100%</div>
+                <div class="lbl">Practical</div>
+            </div>
+            <div class="hero-stat">
+                <div class="num">2</div>
+                <div class="lbl">Real Projects</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════
+         COURSE OUTLINE HEADER
+    ══════════════════════════════════════ -->
+    <section class="course-section">
+        <div class="section-header">
+            <div class="section-icon"><i class="fab fa-python"></i></div>
+            <div>
+                <h2 class="section-title">Python Course Outlines</h2>
+                <p class="section-sub">Structured Oriented Python, Object Oriented Python, NumPy, Pandas, Matplotlib, Projects, and Career Guidelines — all modules presented in table format</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── 1. STRUCTURED ORIENTED PYTHON ── -->
+    <section class="course-section">
+        <div class="section-header">
+            <div class="section-icon"><i class="fas fa-cubes"></i></div>
+            <div>
+                <h2 class="section-title">Structured Oriented Python — Data Structures</h2>
+                <p class="section-sub">Core Python data structures and structured programming</p>
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Module</th>
+                        <th>Title</th>
+                        <th>Objective</th>
+                        <th>Key Topics</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>01</td>
+                        <td>Python Data Structures</td>
+                        <td>Learn to use Python's built-in data structures efficiently</td>
+                        <td>
+                            <ul class="cell-list">
+                                <li>List, Tuple, Set, Dictionary</li>
+                                <li>List Comprehension</li>
+                                <li>Nested Data Structures</li>
+                                <li>Stack and Queue Implementation</li>
+                                <li>Hands-on: Data structure exercises</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>02</td>
+                        <td>Structured Programming</td>
+                        <td>Learn to write clean programs using functions and modular structure</td>
+                        <td>
+                            <ul class="cell-list">
+                                <li>Functions and Arguments</li>
+                                <li>Lambda, Map, Filter, Reduce</li>
+                                <li>Modules and Packages</li>
+                                <li>Error Handling (try/except)</li>
+                                <li>Hands-on: Modular program</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ── 2. OBJECT ORIENTED PYTHON ── -->
+    <section class="course-section">
+        <div class="section-header">
+            <div class="section-icon"><i class="fas fa-cube"></i></div>
+            <div>
+                <h2 class="section-title">Object Oriented Python</h2>
+                <p class="section-sub">Classes, objects, and OOP principles</p>
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Module</th>
+                        <th>Title</th>
+                        <th>Objective</th>
+                        <th>Key Topics</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>03</td>
+                        <td>OOP Fundamentals</td>
+                        <td>Master the core concepts of object-oriented programming</td>
+                        <td>
+                            <ul class="cell-list">
+                                <li>Class and Object</li>
+                                <li>Constructor and __init__</li>
+                                <li>Instance and Class Variables</li>
+                                <li>Methods and Properties</li>
+                                <li>Hands-on: Class design</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>04</td>
+                        <td>Advanced OOP</td>
+                        <td>Learn advanced OOP concepts and patterns</td>
+                        <td>
+                            <ul class="cell-list">
+                                <li>Inheritance and Polymorphism</li>
+                                <li>Encapsulation and Abstraction</li>
+                                <li>Method Overloading and Overriding</li>
+                                <li>Magic/Dunder Methods</li>
+                                <li>Hands-on: OOP project</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ── 3. NUMPY ── -->
+    <section class="course-section">
+        <div class="section-header">
+            <div class="section-icon"><i class="fas fa-calculator"></i></div>
+            <div>
+                <h2 class="section-title">NumPy</h2>
+                <p class="section-sub">Numerical computing and array operations</p>
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Basic</th>
+                        <th>Array Operations</th>
+                        <th>Advanced</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>NumPy Introduction</td><td>Array Indexing</td><td>Broadcasting</td></tr>
+                    <tr><td>Array Creation</td><td>Slicing</td><td>Vectorization</td></tr>
+                    <tr><td>Data Types</td><td>Reshaping</td><td>Linear Algebra</td></tr>
+                    <tr><td>Shape and Size</td><td>Stacking and Splitting</td><td>Random Module</td></tr>
+                    <tr><td>Zeros, Ones, Arange</td><td>Mathematical Functions</td><td>Performance Tips</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ── 4. PANDAS ── -->
+    <section class="course-section">
+        <div class="section-header">
+            <div class="section-icon"><i class="fas fa-table"></i></div>
+            <div>
+                <h2 class="section-title">Pandas</h2>
+                <p class="section-sub">Data manipulation and analysis</p>
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Basic</th>
+                        <th>Data Manipulation</th>
+                        <th>Advanced</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Series and DataFrame</td><td>Filtering and Sorting</td><td>GroupBy</td></tr>
+                    <tr><td>Data Import (CSV, Excel)</td><td>Missing Data Handling</td><td>Merge and Join</td></tr>
+                    <tr><td>Data Inspection</td><td>Apply and Map</td><td>Pivot Table</td></tr>
+                    <tr><td>Indexing and Selection</td><td>String Operations</td><td>Time Series</td></tr>
+                    <tr><td>Basic Statistics</td><td>Concatenation</td><td>Performance Optimization</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ── 5. MATPLOTLIB ── -->
+    <section class="course-section">
+        <div class="section-header">
+            <div class="section-icon"><i class="fas fa-chart-line"></i></div>
+            <div>
+                <h2 class="section-title">Matplotlib</h2>
+                <p class="section-sub">Data visualization and plotting</p>
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Basic</th>
+                        <th>Plot Types</th>
+                        <th>Customization</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Matplotlib Introduction</td><td>Line Plot</td><td>Labels and Titles</td></tr>
+                    <tr><td>Figure and Axes</td><td>Bar Chart</td><td>Legends</td></tr>
+                    <tr><td>Subplots</td><td>Histogram</td><td>Colors and Styles</td></tr>
+                    <tr><td>Plot Saving</td><td>Scatter Plot</td><td>Annotations</td></tr>
+                    <tr><td>Basic Styling</td><td>Pie Chart</td><td>Custom Layouts</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ── 6. PROJECTS ── -->
+    <section class="course-section">
+        <div class="section-header">
+            <div class="section-icon"><i class="fas fa-laptop-code"></i></div>
+            <div>
+                <h2 class="section-title">Projects</h2>
+                <p class="section-sub">Real-world hands-on projects</p>
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Project</th>
+                        <th>Title</th>
+                        <th>Objective</th>
+                        <th>Key Topics</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>01</td>
+                        <td>Data Analysis Project</td>
+                        <td>Build a complete data analysis project using Pandas and Matplotlib</td>
+                        <td>
+                            <ul class="cell-list">
+                                <li>Selecting a real-world dataset</li>
+                                <li>Data cleaning and preprocessing</li>
+                                <li>Exploratory data analysis</li>
+                                <li>Visualization and insights</li>
+                                <li>Report creation</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>02</td>
+                        <td>OOP Application Project</td>
+                        <td>Build a complete application using OOP principles</td>
+                        <td>
+                            <ul class="cell-list">
+                                <li>Requirement analysis</li>
+                                <li>Class design and architecture</li>
+                                <li>Implementation</li>
+                                <li>Testing and debugging</li>
+                                <li>Publishing to GitHub</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ── 7. CAREER GUIDELINES ── -->
+    <section class="course-section">
+        <div class="section-header">
+            <div class="section-icon"><i class="fas fa-briefcase"></i></div>
+            <div>
+                <h2 class="section-title">Career Guidelines</h2>
+                <p class="section-sub">Portfolio, CV, job searching, and interview preparation</p>
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Guideline</th>
+                        <th>Title</th>
+                        <th>Objective</th>
+                        <th>Key Topics</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>01</td>
+                        <td>Portfolio and GitHub</td>
+                        <td>Build a professional portfolio and GitHub profile</td>
+                        <td>
+                            <ul class="cell-list">
+                                <li>GitHub portfolio setup</li>
+                                <li>Project documentation</li>
+                                <li>LinkedIn optimization</li>
+                                <li>Personal website</li>
+                                <li>Hands-on: Build your own portfolio</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>02</td>
+                        <td>Resume and Interview Prep</td>
+                        <td>Create an ATS-friendly CV and prepare for interviews</td>
+                        <td>
+                            <ul class="cell-list">
+                                <li>Python Developer resume structure</li>
+                                <li>ATS optimization</li>
+                                <li>Technical interview questions</li>
+                                <li>HR interview preparation</li>
+                                <li>Hands-on: Mock interview</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ── 8. COURSE OVERVIEW ── -->
+    <section class="course-section">
+        <div class="section-header">
+            <div class="section-icon"><i class="fas fa-info-circle"></i></div>
+            <div>
+                <h2 class="section-title">Course Overview</h2>
+                <p class="section-sub">The entire course at a glance</p>
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Brand</td><td>pyplatoons Bangladesh</td></tr>
+                    <tr><td>Course</td><td>Python Advanced Course</td></tr>
+                    <tr><td>Total Modules</td><td>8</td></tr>
+                    <tr><td>Content</td><td>Structured Oriented Python (Data Structures), Object Oriented Python, NumPy, Pandas, Matplotlib, Projects, Career Guidelines</td></tr>
+                    <tr><td>Practical</td><td>100%</td></tr>
+                    <tr><td>Projects</td><td>2 (Data Analysis + OOP Application)</td></tr>
+                    <tr><td>Enroll Link</td><td>https://pyplatoonsbd.com/courses/python-basic-to-advanced-bangla-course-2024/</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ── CTA SECTION ── -->
+    <div class="cta-wrapper">
+        <div class="cta-banner">
+            <div class="cta-left">
+                <span class="megaphone">📢</span>
+                <div>
+                    <div class="cta-title">Enroll Today</div>
+                    <div class="cta-sub">Classes starting soon &nbsp;•&nbsp; Limited seats</div>
+                </div>
+            </div>
+            <div class="cta-seats">
+                <div class="pulse-dot"></div>
+                🎯 Limited seats left
+            </div>
+        </div>
+
+        <div class="cta-body">
+            <a href="https://pyplatoonsbd.com/courses/python-basic-to-advanced-bangla-course-2024/" class="cta-btn" target="_blank">
+                ✋ Click Here to Enroll
+                <span class="btn-arrow">→</span>
+            </a>
+            <div>
+                <div class="cta-deadline">
+                    Deadline: <span id="deadline-date">22 June 2026</span> &nbsp;|&nbsp; Only <span>4</span> seats left
+                </div>
+                <br>
+                <div class="cta-countdown">
+                    <div class="countdown-dot"></div>
+                    This offer ends today. <span id="countdown-timer">00:00:00</span> remaining.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── FOOTER ── -->
+    <div class="page-footer">
+        Powered By pyplatoons Bangladesh
+    </div>
+
+</main>
+
+<script>
+    // ── Dynamic "Last Date" — always shows today's date in English ──
+    const enMonths = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+    function renderTodayAsDeadline() {
+        const el = document.getElementById('deadline-date');
+        if (!el) return;
+        const now = new Date();
+        const day = now.getDate();
+        const month = enMonths[now.getMonth()];
+        const year = now.getFullYear();
+        el.textContent = `${day} ${month} ${year}`;
+    }
+
+    // ── Daily 24-hour countdown — resets every midnight, ticks down every second ──
+    function renderDailyCountdown() {
+        const el = document.getElementById('countdown-timer');
+        if (!el) return;
+        const now = new Date();
+        const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+        let diffMs = endOfDay - now;
+        if (diffMs < 0) diffMs = 0;
+
+        const totalSeconds = Math.floor(diffMs / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        const pad = (n) => String(n).padStart(2, '0');
+        el.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    }
+
+    renderTodayAsDeadline();
+    renderDailyCountdown();
+    setInterval(() => {
+        renderDailyCountdown();
+    }, 1000);
+    setInterval(renderTodayAsDeadline, 60000);
+</script>
+</body>
+</html>
